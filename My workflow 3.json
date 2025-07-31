@@ -1,0 +1,386 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "77d4e6af-7cdf-465e-aa51-00b3429dc78a",
+        "options": {
+          "binaryPropertyName": "wasteImage"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f00cec66-d57d-40c2-89e3-f3a0fd5a7bb5",
+      "name": "Webhook",
+      "webhookId": "77d4e6af-7cdf-465e-aa51-00b3429dc78a"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=🧹 Prompt to Analyze House Cleaning Image & Data\nAnalyze the uploaded images of the house and provide:\n\nDirt level: Low / Moderate / High\n\nEstimated manpower required (in persons)\n\nEstimated time to clean (in hours)\n\nEstimated cost (in INR) based on dirt level, number of rooms, and house area\n\nCategory of service: Basic / Deep Cleaning / Intensive\n\nCustomer details:\nName: {{ $json.body.name }}\nAddress: {{ $json.body.address }}\nPhone: {{ $json.body.phone }}\nEmail: {{ $json.body.email }}\nNumber of Rooms: {{ $json.body.numberOfRooms }}\nHouse Area (in sq. ft): {{ $json.body.houseArea }}\nImage(s) of the House: {{ $json.body.houseImages[0] }} , {{ $json.body.houseImages[1] }} , {{ $json.body.houseImages[2] }} , {{ $json.body.houseImages[3] }} , {{ $json.body.houseImages[4] }}\n\nRespond strictly in the following format:\nName: {{ $json.body.name }}\nPhone: {{ $json.body.phone }}\nEmail: {{ $json.body.email }}\nAddress: {{ $json.body.address }}\nNumber of Rooms: {{ $json.body.numberOfRooms }}\nHouse Area: {{ $json.body.houseArea }} sq. ft\nDirt Level: (Low / Moderate / High)\nCleaning Type: (Basic / Deep Cleaning / Intensive)\nEstimated Manpower: (X persons)\nEstimated Time: (X hours)\nEstimated Cost (INR): ₹XXX - ₹XXX\nRemarks: [Brief analysis of dirt condition, any special requirements noticed]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        320,
+        0
+      ],
+      "id": "f1b7c962-02b5-49c7-a89b-f716d3cba98b",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "COrIVxcRd9KlDJOn",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst result = items.map((item) => {\n  const content = item.json.message.content;\n  const lines = content.split(\"\\n\");\n  const data = {};\n  lines.forEach((line) => {\n    const [key, value] = line.split(\": \");\n    if (key && value) {\n      data[key] = value;\n    }\n  });\n  return data;\n});\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        0
+      ],
+      "id": "fd0da4c6-480c-4e31-b30b-bd15efe8e104",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1PqbFB3d-PxQM2FSMCNLWDbqYt7dHDhNnsu3Qjsk-gc0",
+          "mode": "list",
+          "cachedResultName": "Cleaning_Business",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PqbFB3d-PxQM2FSMCNLWDbqYt7dHDhNnsu3Qjsk-gc0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PqbFB3d-PxQM2FSMCNLWDbqYt7dHDhNnsu3Qjsk-gc0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name\t": "={{ $json.Name }}",
+            "Phone Number": "={{ $json.Phone }}",
+            "Email": "={{ $json.Email }}",
+            "Address": "={{ $json.Address }}",
+            "Number of Rooms\t": "={{ $json['Number of Rooms'] }}",
+            "House Area (sq. ft)\t": "={{ $json['House Area'] }}",
+            "Image Analysis Summary\t": "={{ $json.Remarks }}",
+            "Dirt Level\t": "={{ $json['Dirt Level'] }}",
+            "Cleaning Type\t": "={{ $json['Cleaning Type'] }}",
+            "Estimated Manpower (Persons)": "={{ $json['Estimated Manpower'] }}",
+            "Estimated Time (Hours)\t": "={{ $json['Estimated Time'] }}",
+            "Estimated Cost (INR)\t": "={{ $json['Estimated Cost (INR)'] }}"
+          },
+          "matchingColumns": [
+            "Customer Name\t"
+          ],
+          "schema": [
+            {
+              "id": "Customer Name\t",
+              "displayName": "Customer Name\t",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Number of Rooms\t",
+              "displayName": "Number of Rooms\t",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "House Area (sq. ft)\t",
+              "displayName": "House Area (sq. ft)\t",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image Analysis Summary\t",
+              "displayName": "Image Analysis Summary\t",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dirt Level\t",
+              "displayName": "Dirt Level\t",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cleaning Type\t",
+              "displayName": "Cleaning Type\t",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estimated Manpower (Persons)",
+              "displayName": "Estimated Manpower (Persons)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estimated Time (Hours)\t",
+              "displayName": "Estimated Time (Hours)\t",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estimated Cost (INR)\t",
+              "displayName": "Estimated Cost (INR)\t",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        960,
+        0
+      ],
+      "id": "58818349-7937-46c3-a90d-d2ce5ef8addf",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wglHhMOuzNqiDagR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "=Room Cleaning Service Quotation",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Your Cleaning Service Quotation - SafaaiBuddy</title>\n    <style>\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n        \n        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            line-height: 1.6;\n            color: #333;\n            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);\n            min-height: 100vh;\n            padding: 20px;\n        }\n        \n        .email-container {\n            max-width: 800px;\n            margin: 0 auto;\n            background: white;\n            border-radius: 20px;\n            overflow: hidden;\n            box-shadow: 0 20px 40px rgba(0,0,0,0.1);\n        }\n        \n        .header {\n            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);\n            padding: 40px 30px;\n            text-align: center;\n            position: relative;\n            overflow: hidden;\n        }\n        \n        .header::before {\n            content: '';\n            position: absolute;\n            top: -50%;\n            left: -50%;\n            width: 200%;\n            height: 200%;\n            background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"stars\" x=\"0\" y=\"0\" width=\"20\" height=\"20\" patternUnits=\"userSpaceOnUse\"><circle cx=\"10\" cy=\"10\" r=\"1\" fill=\"rgba(255,255,255,0.1)\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23stars)\"/></svg>');\n            animation: sparkle 20s linear infinite;\n        }\n        \n        @keyframes sparkle {\n            0% { transform: rotate(0deg); }\n            100% { transform: rotate(360deg); }\n        }\n        \n        .logo-section {\n            position: relative;\n            z-index: 2;\n        }\n        \n        .logo-icon {\n            width: 80px;\n            height: 80px;\n            background: rgba(255,255,255,0.2);\n            border-radius: 50%;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            margin: 0 auto 20px;\n            backdrop-filter: blur(10px);\n        }\n        \n        .logo-icon svg {\n            width: 40px;\n            height: 40px;\n            fill: white;\n        }\n        \n        .header h1 {\n            color: white;\n            font-size: 2.5rem;\n            font-weight: 700;\n            margin-bottom: 10px;\n            position: relative;\n            z-index: 2;\n        }\n        \n        .header .tagline {\n            color: rgba(255,255,255,0.9);\n            font-size: 1.1rem;\n            position: relative;\n            z-index: 2;\n        }\n        \n        .content {\n            padding: 40px 30px;\n        }\n        \n        .greeting {\n            font-size: 1.3rem;\n            color: #333;\n            margin-bottom: 20px;\n        }\n        \n        .intro-text {\n            font-size: 1.1rem;\n            color: #666;\n            margin-bottom: 30px;\n            line-height: 1.7;\n        }\n        \n        .quote-section {\n            background: linear-gradient(135deg, #f8fbff 0%, #f0f9ff 100%);\n            border-radius: 15px;\n            padding: 30px;\n            margin: 30px 0;\n            border: 1px solid rgba(66, 133, 244, 0.1);\n        }\n        \n        .section-title {\n            font-size: 1.4rem;\n            font-weight: 600;\n            color: #1a73e8;\n            margin-bottom: 20px;\n            display: flex;\n            align-items: center;\n            gap: 10px;\n        }\n        \n        .details-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n            gap: 15px;\n            margin-bottom: 25px;\n        }\n        \n        .detail-card {\n            background: white;\n            padding: 20px;\n            border-radius: 12px;\n            border-left: 4px solid #4285f4;\n            box-shadow: 0 2px 8px rgba(0,0,0,0.05);\n            transition: transform 0.2s ease;\n        }\n        \n        .detail-card:hover {\n            transform: translateY(-2px);\n        }\n        \n        .detail-label {\n            font-weight: 600;\n            color: #1a73e8;\n            font-size: 0.9rem;\n            text-transform: uppercase;\n            letter-spacing: 0.5px;\n            margin-bottom: 5px;\n        }\n        \n        .detail-value {\n            font-size: 1.1rem;\n            color: #333;\n            font-weight: 500;\n        }\n        \n        .pricing-highlight {\n            background: linear-gradient(135deg, #34a853 0%, #4285f4 100%);\n            color: white;\n            text-align: center;\n            padding: 25px;\n            border-radius: 15px;\n            margin: 25px 0;\n        }\n        \n        .pricing-highlight .amount {\n            font-size: 2.5rem;\n            font-weight: 700;\n            margin-bottom: 5px;\n        }\n        \n        .pricing-highlight .currency {\n            font-size: 1.2rem;\n            opacity: 0.9;\n        }\n        \n        .service-features {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n            gap: 20px;\n            margin: 30px 0;\n        }\n        \n        .feature-card {\n            background: white;\n            padding: 20px;\n            border-radius: 12px;\n            text-align: center;\n            box-shadow: 0 4px 12px rgba(0,0,0,0.05);\n            border: 1px solid rgba(66, 133, 244, 0.1);\n        }\n        \n        .feature-icon {\n            width: 60px;\n            height: 60px;\n            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);\n            border-radius: 50%;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            margin: 0 auto 15px;\n        }\n        \n        .feature-title {\n            font-weight: 600;\n            color: #333;\n            margin-bottom: 8px;\n        }\n        \n        .feature-desc {\n            color: #666;\n            font-size: 0.9rem;\n        }\n        \n        .next-steps {\n            background: #fff3cd;\n            border: 1px solid #ffeaa7;\n            border-radius: 12px;\n            padding: 25px;\n            margin: 25px 0;\n        }\n        \n        .next-steps h3 {\n            color: #856404;\n            margin-bottom: 15px;\n        }\n        \n        .steps-list {\n            list-style: none;\n            padding: 0;\n        }\n        \n        .steps-list li {\n            padding: 8px 0;\n            color: #856404;\n            position: relative;\n            padding-left: 25px;\n        }\n        \n        .steps-list li::before {\n            content: '✓';\n            position: absolute;\n            left: 0;\n            font-weight: bold;\n            color: #28a745;\n        }\n        \n        .cta-section {\n            text-align: center;\n            margin: 30px 0;\n        }\n        \n        .cta-button {\n            display: inline-block;\n            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);\n            color: white;\n            padding: 15px 30px;\n            border-radius: 50px;\n            text-decoration: none;\n            font-weight: 600;\n            font-size: 1.1rem;\n            transition: transform 0.2s ease;\n            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);\n        }\n        \n        .cta-button:hover {\n            transform: translateY(-2px);\n            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);\n        }\n        \n        .footer {\n            background: #333;\n            color: white;\n            padding: 30px;\n            text-align: center;\n        }\n        \n        .footer-content {\n            max-width: 600px;\n            margin: 0 auto;\n        }\n        \n        .footer h3 {\n            margin-bottom: 15px;\n            color: #4285f4;\n        }\n        \n        .contact-info {\n            display: flex;\n            justify-content: center;\n            gap: 30px;\n            margin: 20px 0;\n            flex-wrap: wrap;\n        }\n        \n        .contact-item {\n            display: flex;\n            align-items: center;\n            gap: 8px;\n            color: #ccc;\n        }\n        \n        .created-by {\n            margin-top: 20px;\n            padding-top: 20px;\n            border-top: 1px solid #555;\n            color: #999;\n            font-size: 0.9rem;\n        }\n        \n        @media (max-width: 600px) {\n            .details-grid {\n                grid-template-columns: 1fr;\n            }\n            \n            .service-features {\n                grid-template-columns: 1fr;\n            }\n            \n            .contact-info {\n                flex-direction: column;\n                gap: 15px;\n            }\n            \n            .header h1 {\n                font-size: 2rem;\n            }\n            \n            .content {\n                padding: 30px 20px;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"email-container\">\n        <div class=\"header\">\n            <div class=\"logo-section\">\n                <div class=\"logo-icon\">\n                    <svg viewBox=\"0 0 24 24\">\n                        <path d=\"M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M8.5,7A1.5,1.5 0 0,1 10,8.5A1.5,1.5 0 0,1 8.5,10A1.5,1.5 0 0,1 7,8.5A1.5,1.5 0 0,1 8.5,7M15.5,7A1.5,1.5 0 0,1 17,8.5A1.5,1.5 0 0,1 15.5,10A1.5,1.5 0 0,1 14,8.5A1.5,1.5 0 0,1 15.5,7Z\"/>\n                    </svg>\n                </div>\n                <h1>SafaaiBuddy</h1>\n                <p class=\"tagline\">Homes Delivered</p>\n            </div>\n        </div>\n\n        <div class=\"content\">\n            <div class=\"greeting\">\n                Hello {{ $json['Customer Name\t'] }},\n            </div>\n\n            <p class=\"intro-text\">\n                Thank you for choosing SafaaiBuddy! We've carefully analyzed your cleaning requirements and prepared a comprehensive quotation tailored specifically for your home. Our professional team is ready to transform your space into a pristine sanctuary.\n            </p>\n\n            <div class=\"quote-section\">\n                <h2 class=\"section-title\">\n                    📋 Your Personalized Cleaning Quote\n                </h2>\n\n                <div class=\"details-grid\">\n                    <div class=\"detail-card\">\n                        <div class=\"detail-label\">Customer Name</div>\n                        <div class=\"detail-value\">{{ $json['Customer Name\t'] }}</div>\n                    </div>\n\n                    <div class=\"detail-card\">\n                        <div class=\"detail-label\">Phone Number</div>\n                        <div class=\"detail-value\">{{ $json['Phone Number'] }}</div>\n                    </div>\n\n                    <div class=\"detail-card\">\n                        <div class=\"detail-label\">Service Address</div>\n                        <div class=\"detail-value\">{{ $json.Address }}</div>\n                    </div>\n\n                    <div class=\"detail-card\">\n                        <div class=\"detail-label\">Number of Rooms</div>\n                        <div class=\"detail-value\">{{ $json['Number of Rooms\t'] }}</div>\n                    </div>\n\n                    <div class=\"detail-card\">\n                        <div class=\"detail-label\">House Area</div>\n                        <div class=\"detail-value\"> {{ $json['House Area (sq. ft)\t'] }}</div>\n                    </div>\n\n                    <div class=\"detail-card\">\n                        <div class=\"detail-label\">Cleaning Type</div>\n                        <div class=\"detail-value\">{{ $json['Cleaning Type\t'] }}</div>\n                    </div>\n\n                    <div class=\"detail-card\">\n                        <div class=\"detail-label\">Dirt Level Assessment</div>\n                        <div class=\"detail-value\">{{ $json['Dirt Level\t'] }}</div>\n                    </div>\n\n                    <div class=\"detail-card\">\n                        <div class=\"detail-label\">Assigned Manpower</div>\n                        <div class=\"detail-value\"> {{ $json['Estimated Manpower (Persons)'] }}-Professional Cleaners</div>\n                    </div>\n                </div>\n\n                <div class=\"details-grid\">\n                    <div class=\"detail-card\" style=\"grid-column: 1 / -1;\">\n                        <div class=\"detail-label\">Property Analysis Summary</div>\n                        <div class=\"detail-value\">{{ $json['Image Analysis Summary\t'] }}</div>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"pricing-highlight\">\n                <div class=\"amount\">{{ $json['Estimated Cost (INR)\t'] }}</div>\n                <div class=\"currency\">Estimated Total Cost</div>\n                <p style=\"margin-top: 10px; opacity: 0.9;\">Estimated Duration: {{ $json['Estimated Time (Hours)\t'] }} </p>\n            </div>\n\n            <div class=\"service-features\">\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        <svg width=\"30\" height=\"30\" fill=\"white\" viewBox=\"0 0 24 24\">\n                            <path d=\"M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z\"/>\n                        </svg>\n                    </div>\n                    <div class=\"feature-title\">Fully Insured</div>\n                    <div class=\"feature-desc\">Licensed & bonded professionals</div>\n                </div>\n\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        <svg width=\"30\" height=\"30\" fill=\"white\" viewBox=\"0 0 24 24\">\n                            <path d=\"M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z\"/>\n                        </svg>\n                    </div>\n                    <div class=\"feature-title\">Same Day Service</div>\n                    <div class=\"feature-desc\">Available 7 days a week</div>\n                </div>\n\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        <svg width=\"30\" height=\"30\" fill=\"white\" viewBox=\"0 0 24 24\">\n                            <path d=\"M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M8.5,7A1.5,1.5 0 0,1 10,8.5A1.5,1.5 0 0,1 8.5,10A1.5,1.5 0 0,1 7,8.5A1.5,1.5 0 0,1 8.5,7M15.5,7A1.5,1.5 0 0,1 17,8.5A1.5,1.5 0 0,1 15.5,10A1.5,1.5 0 0,1 14,8.5A1.5,1.5 0 0,1 15.5,7Z\"/>\n                        </svg>\n                    </div>\n                    <div class=\"feature-title\">100% Satisfaction</div>\n                    <div class=\"feature-desc\">Money-back guarantee</div>\n                </div>\n            </div>\n\n            <div class=\"next-steps\">\n                <h3>🚀 Next Steps to Book Your Service:</h3>\n                <ul class=\"steps-list\">\n                    <li>Review your personalized quotation above</li>\n                    <li>Contact us to confirm your preferred date and time</li>\n                    <li>Our team will arrive fully equipped and ready to work</li>\n                    <li>Enjoy your sparkling clean home with our satisfaction guarantee</li>\n                </ul>\n            </div>\n\n            <div class=\"cta-section\">\n                <a href=\"tel:+919876543210\" class=\"cta-button\">📞 Book Now - Call Us Today!</a>\n            </div>\n\n            <p style=\"background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #ffc107; margin: 20px 0;\">\n                <strong>⚠️ Important Note:</strong> This quotation is valid for 7 days and is based on the information and images provided. Final pricing may vary slightly based on actual conditions during our on-site assessment. All our services include eco-friendly cleaning products at no extra cost.\n            </p>\n\n            <p style=\"color: #666; font-size: 1rem; margin-top: 30px;\">\n                Thank you for trusting SafaaiBuddy with your cleaning needs. We look forward to exceeding your expectations and making your home shine!\n            </p>\n\n            <p style=\"margin-top: 20px;\">\n                <strong>Warm regards,</strong><br>\n                <span style=\"color: #4285f4; font-weight: 600;\">The SafaaiBuddy Team</span>\n            </p>\n        </div>\n\n                <div class=\"created-by\">\n                    <p>© 2025 SafaaiBuddy | Designed & Developed by <strong>Soham Soni</strong></p>\n                    <p>Transform your home into a pristine sanctuary today</p>\n                </div>\n            </div>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        0
+      ],
+      "id": "1dc1d5e4-b21a-4c41-bb6b-e079f7a95425",
+      "name": "Send a message",
+      "webhookId": "7b88bf07-b316-4363-9556-75c2e9fe7c7a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GBdytPOb3P9C4b5F",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "=You are a House Deep Cleaning Estimator assistant. Based on the following retrieved data and the user's input, generate a structured cleaning estimate in Indian Rupees.\n\nUser Input:\n- Name: {{user.name}}\n- Address: {{user.address}}\n- Phone: {{user.phone}}\n- Email: {{user.email}}\n- Number of Rooms: {{user.rooms}}\n- House Area (sq. ft): {{user.area}}\n- Image Input Summary: {{user.imageSummary}}\n\nRetrieved Data from Pinecone:\n{{retrieved_context}}\n\nNow provide a formatted response as follows:\n\nName: {{user.name}}\nPhone: {{user.phone}}\nEmail: {{user.email}}\nAddress: {{user.address}}\nNumber of Rooms: {{user.rooms}}\nHouse Area: {{user.area}} sq. ft\nDirt Level: (Low / Moderate / High)\nCleaning Type: (Basic / Deep Cleaning / Intensive)\nEstimated Manpower: (X persons)\nEstimated Time: (X hours)\nEstimated Cost (INR): ₹XXX - ₹XXX\nRemarks: [Brief remark summarizing the input and matching context]\n",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "business",
+          "mode": "list",
+          "cachedResultName": "business"
+        },
+        "options": {
+          "pineconeNamespace": "new_business"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        240
+      ],
+      "id": "12dabc92-3110-4815-9e16-f53dd62312ac",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "dDkpa2Vi0gD5aV9w",
+          "name": "PineconeApi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        288
+      ],
+      "id": "4e43d1ee-e973-4d26-bc48-4ecc88669400",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "COrIVxcRd9KlDJOn",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Message a model",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "72ed67a2-2bb1-42b0-8fbb-1f468c24e65b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "67bc3d725c92a5ef0c230d260d9866e18ef683e5f7aee0e001fbb56c28685e5f"
+  },
+  "id": "eIpdRnQ3h9qEoHIA",
+  "tags": []
+}
