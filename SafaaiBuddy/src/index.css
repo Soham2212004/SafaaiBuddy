@@ -1,0 +1,200 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* House Cleaning Service Design System - Ultra Modern UI */
+
+@layer base {
+  :root {
+    /* Core Brand Colors - Clean, Fresh, Professional */
+    --background: 210 20% 98%;
+    --foreground: 225 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 225 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 225 25% 15%;
+
+    /* Primary - Professional Blue with Clean Fresh Feel */
+    --primary: 215 85% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 215 85% 45%;
+    
+    /* Secondary - Clean Mint Green */
+    --secondary: 155 65% 60%;
+    --secondary-foreground: 0 0% 100%;
+    
+    /* Accent - Sparkling Clean White with Blue Tint */
+    --accent: 210 30% 95%;
+    --accent-foreground: 225 25% 25%;
+
+    --muted: 210 25% 92%;
+    --muted-foreground: 215 15% 45%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 20% 88%;
+    --input: 215 25% 94%;
+    --ring: 215 85% 55%;
+
+    --radius: 12px;
+
+    /* Beautiful Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(215 85% 55%), hsl(195 85% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(155 65% 60%), hsl(175 70% 55%));
+    --gradient-hero: linear-gradient(135deg, hsl(215 85% 55%) 0%, hsl(195 85% 65%) 50%, hsl(155 65% 60%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 30% 98%) 100%);
+    
+    /* Elegant Shadows */
+    --shadow-soft: 0 2px 15px -3px hsl(215 25% 85% / 0.3);
+    --shadow-medium: 0 8px 25px -8px hsl(215 25% 75% / 0.4);
+    --shadow-strong: 0 15px 35px -5px hsl(215 25% 65% / 0.3);
+    --shadow-glow: 0 0 40px hsl(215 85% 55% / 0.15);
+    
+    /* Professional Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-fast: all 0.15s ease-out;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background: var(--gradient-hero);
+    background-attachment: fixed;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Hero Button Variants */
+  .btn-hero {
+    @apply bg-gradient-to-r from-primary to-secondary text-primary-foreground 
+           shadow-lg hover:shadow-xl transform hover:scale-105 
+           transition-all duration-300 font-semibold px-8 py-4 rounded-xl
+           border-2 border-white/20 backdrop-blur-sm;
+  }
+  
+  .btn-glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 
+           text-primary-foreground hover:bg-white/20 
+           transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+  
+  /* Card Variants */
+  .card-glass {
+    @apply bg-white/80 backdrop-blur-lg border border-white/30 
+           shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+  
+  .card-gradient {
+    background: var(--gradient-card);
+    @apply shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+  
+  /* Form Elements */
+  .input-modern {
+    @apply bg-white/90 backdrop-blur-sm border-2 border-white/30 
+           focus:border-primary focus:ring-4 focus:ring-primary/20
+           rounded-xl px-4 py-3 transition-all duration-300
+           placeholder:text-muted-foreground/60;
+  }
+  
+  /* Animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 20px hsl(215 85% 55% / 0.3); }
+  100% { box-shadow: 0 0 40px hsl(215 85% 55% / 0.6); }
+}
+
+@keyframes slide-up {
+  0% { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
